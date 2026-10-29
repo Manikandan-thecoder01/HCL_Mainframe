@@ -1,0 +1,83 @@
+
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. BATCHRECON.
+
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+
+       01  TRANSACTION.
+           05 TRANS-ID       PIC X(10).
+           05 AMOUNT         PIC 9(7)V99.
+
+       01  EXPECTED-COUNT    PIC 9(5).
+       01  EXPECTED-TOTAL    PIC 9(9)V99.
+
+       01  ACTUAL-COUNT      PIC 9(5)
+                                VALUE ZERO.
+       01  ACTUAL-TOTAL      PIC 9(9)V99
+                                VALUE ZERO.
+
+       01  COUNT-STATUS      PIC X(10).
+       01  AMOUNT-STATUS     PIC X(10).
+
+       01  I                 PIC 9(5).
+
+       01  DISPLAY-TOTAL     PIC ZZZZZZ9.99.
+       01  DISPLAY-EXPECTED  PIC ZZZZZZ9.99.
+
+       PROCEDURE DIVISION.
+
+       
+       MAIN-PARA.
+
+           DISPLAY "ENTER NUMBER OF TRANSACTIONS:"
+           ACCEPT I
+
+           MOVE ZERO TO ACTUAL-COUNT
+           MOVE ZERO TO ACTUAL-TOTAL
+
+           PERFORM I TIMES
+               PERFORM READ-TRANSACTION
+           END-PERFORM
+
+           DISPLAY "ENTER EXPECTED RECORD COUNT:"
+           ACCEPT EXPECTED-COUNT
+
+           DISPLAY "ENTER EXPECTED TOTAL AMOUNT:"
+           ACCEPT EXPECTED-TOTAL
+
+           IF ACTUAL-COUNT = EXPECTED-COUNT
+               MOVE "MATCH" TO COUNT-STATUS
+           ELSE
+               MOVE "MISMATCH" TO COUNT-STATUS
+           END-IF
+
+           IF ACTUAL-TOTAL = EXPECTED-TOTAL
+               MOVE "MATCH" TO AMOUNT-STATUS
+           ELSE
+               MOVE "MISMATCH" TO AMOUNT-STATUS
+           END-IF
+
+           MOVE ACTUAL-TOTAL TO DISPLAY-TOTAL
+           MOVE EXPECTED-TOTAL TO DISPLAY-EXPECTED
+
+           DISPLAY " "
+           DISPLAY "----- RECONCILIATION REPORT -----"
+           DISPLAY "OBSERVED COUNT: " ACTUAL-COUNT
+           DISPLAY "EXPECTED COUNT: " EXPECTED-COUNT
+           DISPLAY "COUNT STATUS: " COUNT-STATUS
+           DISPLAY "OBSERVED TOTAL: " DISPLAY-TOTAL
+           DISPLAY "EXPECTED TOTAL: " DISPLAY-EXPECTED
+           DISPLAY "AMOUNT STATUS: " AMOUNT-STATUS
+
+           STOP RUN.
+
+       READ-TRANSACTION.
+           DISPLAY "ENTER TRANSACTION ID:"
+           ACCEPT TRANS-ID
+
+           DISPLAY "ENTER TRANSACTION AMOUNT:"
+           ACCEPT AMOUNT
+
+           ADD 1 TO ACTUAL-COUNT
+           ADD AMOUNT TO ACTUAL-TOTAL.
